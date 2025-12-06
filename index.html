@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShredCap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #212529;
+            --text-light: #f8f9fa;
+            --accent-teal: #4E6363;
+            --font-display: 'Permanent Marker', cursive;
+            --font-body: 'Roboto Mono', monospace;
+        }
+        body {
+            margin: 0;
+            font-family: var(--font-body);
+            color: var(--text-light);
+            background-color: var(--bg-dark);
+            background-image: 
+                url('Grunge/grunge 2.jpeg'),
+                linear-gradient(rgba(33, 37, 41, 0.7), rgba(78, 99, 99, 0.6)),
+                url('IMG_4445.JPG');
+            background-size: cover, cover, cover;
+            background-position: center, center, center;
+            background-attachment: fixed;
+            background-blend-mode: overlay, multiply, normal;
+            filter: contrast(1.1);
+            overflow-x: hidden;
+        }
+        .navbar {
+            background-color: var(--text-light);
+            color: var(--bg-dark);
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .navbar .logo {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            color: var(--bg-dark);
+            text-decoration: none;
+        }
+        .navbar .nav-links a {
+            font-family: var(--font-body);
+            font-weight: 700;
+            color: var(--bg-dark);
+            text-decoration: none;
+            margin-left: 2.5rem;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+        .navbar .nav-links a:hover {
+            color: var(--accent-teal);
+        }
+        .container {
+            padding: 2rem 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .content-card {
+            background-color: var(--text-light);
+            color: var(--bg-dark);
+            padding: 3rem;
+            transform: rotate(-1.5deg);
+            margin-top: 4rem;
+            width: 55%;
+            box-shadow: 8px 8px 0px var(--accent-teal);
+            border: 2px solid var(--bg-dark);
+        }
+        .content-card h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 400;
+            margin: 0 0 1rem 0;
+            line-height: 1.2;
+        }
+        .content-card p {
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        .btn-link {
+            font-family: var(--font-display);
+            font-weight: 400;
+            font-size: 1.2rem;
+            color: var(--bg-dark);
+            text-decoration: none;
+            border-bottom: 2px solid var(--accent-teal);
+            padding-bottom: 0.25rem;
+            transition: all 0.3s ease;
+        }
+        .btn-link:hover {
+            color: var(--accent-teal);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="logo">ShredCap</a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="forecast.html">Forecast</a>
+            <a href="about.html">About</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="content-card">
+            <h1>Your shred companion.</h1>
+            <p>
+                Essential Mt. Hood info to help you plan your next trip up there. 
+            </p>
+            <a href="forecast.html" class="btn-link">Check the Forecast</a>
+        </div>
+    </main>
+    
+</body>
+</html>

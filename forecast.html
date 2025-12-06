@@ -1,0 +1,417 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShredCap - Forecast</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #212529;
+            --text-light: #f8f9fa;
+            --accent-teal: #4E6363;
+            --cool-blue: #00CED1; /* New cool blue color */
+            --font-display: 'Permanent Marker', cursive;
+            --font-body: 'Roboto Mono', monospace;
+        }
+        body {
+            margin: 0;
+            font-family: var(--font-body);
+            color: var(--text-light);
+            background-color: var(--bg-dark);
+            background-image: 
+                url('Grunge/grunge 2.jpeg'),
+                linear-gradient(rgba(33, 37, 41, 0.7), rgba(78, 99, 99, 0.6)),
+                url('8161F6F8-0FDB-4868-8815-32EF40E3661E.JPG');
+            background-size: cover, cover, cover;
+            background-position: center, center, center;
+            background-attachment: fixed;
+            background-blend-mode: overlay, multiply, normal;
+            filter: contrast(1.1);
+            overflow-x: hidden;
+        }
+        .navbar {
+            background-color: var(--text-light); /* Changed to white */
+            color: var(--bg-dark); /* Changed to black font */
+            padding: 1rem 3rem; /* Reduced padding slightly */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .navbar .logo {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            color: var(--bg-dark); /* Changed to black font */
+            text-decoration: none;
+        }
+        .navbar .nav-links a {
+            font-family: var(--font-body);
+            font-weight: 700;
+            color: var(--bg-dark); /* Changed to black font */
+            text-decoration: none;
+            margin-left: 2.5rem;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+        .navbar .nav-links a:hover {
+            color: var(--accent-teal);
+        }
+        .container {
+            padding: 2rem 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        .content-card {
+            background-color: rgba(33, 37, 41);
+            backdrop-filter: blur(5px);
+            color: var(--text-light);
+            padding: 2rem;
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.5);
+            border: 1px solid var(--text-light);
+        }
+        .content-card h2 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin: 0 0 1.5rem 0;
+            line-height: 1.2;
+            text-align: center;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .forecast-card {
+            width: 30%;
+            min-width: 300px;
+            transform: rotate(-1deg);
+        }
+        .forecast-group {
+            display: flex;
+            gap: 2rem;
+            width: 100%;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            width: 100%;
+            align-items: start;
+        }
+        .lift-card {
+            grid-column: 1 / 3;
+            transform: rotate(1deg);
+        }
+        .chart-card {
+            grid-column: 1 / 2;
+            transform: rotate(-1deg);
+            height: 350px;
+        }
+        .dates-card {
+            grid-column: 2 / 3;
+            transform: rotate(2deg);
+        }
+        .content-card-light {
+            background-color: var(--text-light);
+            color: var(--bg-dark);
+            box-shadow: 8px 8px 0px var(--accent-teal);
+            border: 2px solid var(--bg-dark);
+        }
+        .content-card-light h2 {
+            color: var(--bg-dark);
+        }
+        .content-card-light th, .content-card-light td {
+            color: var(--bg-dark);
+        }
+        .bubble {
+            position: relative;
+            background: var(--cool-blue);
+            color: var(--text-light);
+            border: 2px solid var(--text-light);
+            border-radius: 9999px; /* Pill shape */
+            padding: 0.75rem 1.5rem;
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            line-height: 1.2;
+            text-align: center;
+            filter: drop-shadow(5px 5px 0px rgba(0,0,0,0.5));
+            transform: rotate(-3deg); /* Grungy and exciting */
+        }
+        .bubble-light {
+            background: var(--text-light);
+            color: var(--bg-dark);
+            border: 2px solid var(--bg-dark);
+            filter: drop-shadow(5px 5px 0px var(--cool-blue)); /* Different shadow for contrast */
+        }
+
+        .chart-bubble {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 180px;
+            transform: rotate(5deg);
+        }
+        .forecast-blurb {
+            margin-top: 1rem;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            font-family: var(--font-body);
+            padding: 0.75rem 0;
+            text-align: left;
+            border-bottom: 1px solid var(--accent-teal);
+            font-weight: 700;
+            color: var(--text-light);
+        }
+        th {
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="logo">ShredCap</a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="forecast.html">Forecast</a>
+            <a href="about.html">About</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="forecast-group">
+            <div class="content-card forecast-card" style="transform: rotate(-2deg);">
+                <h2>Upper Mtn: Silcox Hut</h2>
+                <table id="forecast-table-silcox">
+                    <tbody>
+                        <tr><th>Condition</th><td id="condition-silcox">--</td></tr>
+                        <tr><th>Temperature</th><td id="temperature-silcox">--°F</td></tr>
+                        <tr><th>Wind</th><td id="wind-silcox">-- mph</td></tr>
+                        <tr><th>24hr Snow</th><td id="snowfall-silcox">--"</td></tr>
+                    </tbody>
+                </table>
+                <div class="bubble forecast-blurb" id="blurb-silcox"></div>
+            </div>
+            <div class="content-card content-card-light forecast-card">
+                <h2>Mid-Mtn: Lodge</h2>
+                <table id="forecast-table-lodge">
+                    <tbody>
+                        <tr><th>Condition</th><td id="condition-lodge">--</td></tr>
+                        <tr><th>Temperature</th><td id="temperature-lodge">--°F</td></tr>
+                        <tr><th>Wind</th><td id="wind-lodge">-- mph</td></tr>
+                        <tr><th>24hr Snow</th><td id="snowfall-lodge">--"</td></tr>
+                        <tr><th>Seasonal Snowfall</th><td id="season-snowfall">--"</td></tr>
+                    </tbody>
+                </table>
+                <div class="bubble bubble-light forecast-blurb" id="blurb-lodge"></div>
+            </div>
+            <div class="content-card forecast-card" style="transform: rotate(2deg);">
+                <h2>Base: Gov't Camp</h2>
+                <table id="forecast-table-govy">
+                    <tbody>
+                        <tr><th>Condition</th><td id="condition-govy">--</td></tr>
+                        <tr><th>Temperature</th><td id="temperature-govy">--°F</td></tr>
+                        <tr><th>Wind</th><td id="wind-govy">-- mph</td></tr>
+                        <tr><th>24hr Snow</th><td id="snowfall-govy">--"</td></tr>
+                    </tbody>
+                </table>
+                <div class="bubble forecast-blurb" id="blurb-govy"></div>
+            </div>
+        </div>
+        <div class="card-grid">
+            <div class="content-card chart-card">
+                <h2>Avg Monthly Snowfall Last 3 Years</h2>
+                <div class="bubble chart-bubble">
+                    Check out the average monthly snowfall from the last 3 seasons! 2022-2025
+                </div>
+                <canvas id="historicalChart"></canvas>
+            </div>
+            <div class="content-card content-card-light dates-card">
+                <h2>Season Dates</h2>
+                <table>
+                    <tbody>
+                        <tr><th>2022/2023</th><td>Nov 11 - May 29</td></tr>
+                        <tr><th>2021/2022</th><td>Jan 5 - May 29</td></tr>
+                        <tr><th>2020/2021</th><td>Nov 25 - May 31</td></tr>
+                        <tr><th>2019/2020</th><td>Nov 28 - Mar 15</td></tr>
+                        <tr><th>2018/2019</th><td>Nov 24 - May 28</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="content-card content-card-light lift-card">
+                <h2>Lift Status</h2>
+                <!-- Lift status is static. To refresh, re-run the tool. -->
+                <table>
+                    <tbody>
+                        <tr><th>Jeff Flood</th><td>Closed</td></tr>
+                        <tr><th>Stormin' Norman</th><td>Closed</td></tr>
+                        <tr><th>Magic Mile</th><td>Closed</td></tr>
+                        <tr><th>Palmer</th><td>Closed</td></tr>
+                        <tr><th>Molley's</th><td>Closed</td></tr>
+                        <tr><th>Pucci</th><td>Closed</td></tr>
+                        <tr><th>Summit Chairlift</th><td>Closed</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const LOCATIONS = {
+            silcox: { lat: 45.33, lon: -121.71, name: "Silcox Hut" },
+            lodge: { lat: 45.33, lon: -121.71, name: "Timberline Lodge" },
+            govy: { lat: 45.30, lon: -121.74, name: "Government Camp" }
+        };
+
+        const WEATHER_CODES = {
+            0: "Clear sky", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
+            45: "Fog", 48: "Depositing rime fog",
+            51: "Light drizzle", 53: "Moderate drizzle", 55: "Dense drizzle",
+            56: "Light freezing drizzle", 57: "Dense freezing drizzle",
+            61: "Slight rain", 63: "Moderate rain", 65: "Heavy rain",
+            66: "Light freezing rain", 67: "Heavy freezing rain",
+            71: "Slight snow fall", 73: "Moderate snow fall", 75: "Heavy snow fall",
+            77: "Snow grains",
+            80: "Slight rain showers", 81: "Moderate rain showers", 82: "Violent rain showers",
+            85: "Slight snow showers", 86: "Heavy snow showers",
+            95: "Thunderstorm", 96: "Thunderstorm with slight hail", 99: "Thunderstorm with heavy hail"
+        };
+
+        const getCssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+        function updateForecastCard(locationId, data) {
+            try {
+                const current = data.current_weather;
+                document.getElementById(`temperature-${locationId}`).textContent = `${Math.round(current.temperature)}°F`;
+                document.getElementById(`wind-${locationId}`).textContent = `${Math.round(current.windspeed)} mph`;
+
+                const daily = data.daily;
+                const snowfallSum = daily.snowfall_sum[0] * 0.393701; // cm to inches
+                document.getElementById(`snowfall-${locationId}`).textContent = `${snowfallSum.toFixed(1)}"`;
+
+                if (snowfallSum <= 0) {
+                    document.getElementById(`condition-${locationId}`).textContent = "Waiting for pow";
+                } else {
+                    document.getElementById(`condition-${locationId}`).textContent = WEATHER_CODES[current.weathercode] || "Unknown";
+                }
+
+                const hourly = data.hourly;
+                const now = new Date();
+                const currentHourIndex = hourly.time.findIndex(t => new Date(t) > now);
+
+                let precipEvent = "";
+                if(currentHourIndex > -1) {
+                    const nextPrecipIndex = hourly.precipitation_probability.slice(currentHourIndex).findIndex(p => p > 20); // 20% chance
+                    if (nextPrecipIndex > -1) {
+                        const precipTime = new Date(hourly.time[currentHourIndex + nextPrecipIndex]).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                        precipEvent = `Wintry mix expected around ${precipTime}. `;
+                    }
+                }
+
+                const apparentTemp = hourly.apparent_temperature[currentHourIndex] || current.temperature;
+                const blurbText = `${precipEvent}Wind gusts up to ${Math.round(current.windspeed)} m.p.h. are making the temperature feel like ${Math.round(apparentTemp)}°.`;
+                const blurbEl = document.getElementById(`blurb-${locationId}`);
+                blurbEl.textContent = blurbText;
+                blurbEl.style.display = 'flex';
+            } catch (error) {
+                console.error(`Failed to update forecast card for ${locationId}:`, error);
+                const blurbEl = document.getElementById(`blurb-${locationId}`);
+                if (blurbEl) blurbEl.style.display = 'none';
+            }
+        }
+
+
+        function updateHistoricalChart() {
+            const labels = ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            // Average Monthly Snowfall (inches)
+            // Oct: 0 (assuming)
+            // Nov: 41
+            // Dec: 89
+            // Jan: 72
+            // Feb: 86
+            // Mar: 72
+            // Apr: 64
+            // May: 17
+            // Jun: 6
+            const snowfallData = [0, 0, 0, 0, 41, 89, 72, 86, 72, 64, 17, 6];
+
+            const totalSeasonalSnowfall = snowfallData.reduce((acc, val) => acc + val, 0);
+            // I'm changing this to 0 because average is not seasonal.
+            document.getElementById('season-snowfall').textContent = `0"`; 
+            
+            const ctx = document.getElementById('historicalChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Monthly Snowfall',
+                            data: snowfallData,
+                            backgroundColor: getCssVar('--accent-teal'),
+                            borderColor: getCssVar('--accent-teal'),
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: getCssVar('--text-light') }, grid: { color: 'rgba(248, 249, 250, 0.1)' } },
+                        y: { ticks: { color: getCssVar('--text-light') }, grid: { color: 'rgba(248, 249, 250, 0.1)' }, title: { display: true, text: 'Snowfall (in)' } }
+                    }
+                }
+            });
+        }
+
+        async function fetchWeatherData() {
+            const forecastPromises = Object.keys(LOCATIONS).map(id => {
+                const { lat, lon } = LOCATIONS[id];
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&daily=snowfall_sum&hourly=apparent_temperature,precipitation_probability&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=America/Los_Angeles`;
+                return fetch(url).then(res => res.json());
+            });
+
+            try {
+                const [silcoxData, lodgeData, govyData] = await Promise.all(forecastPromises);
+                
+                updateForecastCard('silcox', silcoxData);
+                updateForecastCard('lodge', lodgeData);
+                updateForecastCard('govy', govyData);
+                updateHistoricalChart();
+
+            } catch (error) {
+                console.error("Failed to fetch weather data:", error);
+                Object.keys(LOCATIONS).forEach(id => {
+                    document.getElementById(`condition-${id}`).textContent = "--";
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchWeatherData);
+    </script>
+</body>
+</html>
