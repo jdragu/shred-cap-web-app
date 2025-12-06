@@ -10,6 +10,7 @@ Our mission is to empower ski resort visitors with the information they need to 
 *   **Forecast Page:** Real-time and next-day weather forecasts (temperature, precipitation) for Timberline Lodge.
 *   **Historical Data:** Interactive graphs showing historical temperature and snow depth data for the past three years.
 *   **About Page:** Information about ShredCap's mission and goals.
+*   **Predictive Lift Status Model:** A predictive model that will take weather forecasts (wind speeds, visibility, etc.) and historical data of when certain lifts are open/closed to predict whether a lift will be open tomorrow.
 
 ## Getting Started (Planned)
 
